@@ -23,8 +23,7 @@ MODEL_PTH = './weights_denoiser.pth'
 #inputFolderMask='Mask_Synthetic/'
 # device = torch.device('cpu')
 # device = dinv.utils.get_freer_gpu()
-device = torch.device('cpu')
-
+device = torch.device('cuda')
 
 class GUNet(torch.nn.Module):
     def __init__(self, data):
@@ -118,9 +117,10 @@ def main(inputFolder,outputFolder,difficulty):
     
     # from E2E
     Uelref = sp.io.loadmat(inputFolder + '/ref.mat')["Uelref"] #measured voltages from water chamber
-    mask = get_mask(difficulty)
+    mask_e2e = get_mask(difficulty)
     backbone = dinv.models.UNet(in_channels=len(regularization), out_channels=3, scales=4).to(device)
     model = Network(backbone, regularization, difficulty=difficulty, device=device, pixels=pixels, train_first=True)
+    
     p = Path(f"models/difficulty_{difficulty}_learnedlinear.pth.tar")
     model.load_state_dict(torch.load(p)['state_dict'])
     # model.load_state_dict(torch.load(p,map_location=torch.device('cpu'))['state_dict'])   # for CPU
@@ -226,7 +226,7 @@ def main(inputFolder,outputFolder,difficulty):
     
     data = Data(x=torch.tensor(sigma0, dtype=torch.float32), edge_index=edge_index)
     denoiser = GUNet(data).to(device)
-    denoiser.load_state_dict(torch.load(MODEL_PTH, map_location=torch.device('cpu')), strict=False)
+    denoiser.load_state_dict(torch.load(MODEL_PTH, map_location=torch.device('cuda')), strict=False)
     
     # PnP Parameters
     its_max_PGN = 10    #Maximum number of OUTER iterations for Proximal Gradient Newton- TV (PGN_TV)
@@ -239,9 +239,9 @@ def main(inputFolder,outputFolder,difficulty):
     for objectno in  range (0,len(mat_files)): #compute the reconstruction for each input file
         Uel = sp.io.loadmat(mat_files[objectno])["Uel"]
         deltaU = Uel - Uelref
-        y = np.zeros((1, np.sum(mask), 1))
+        y = np.zeros((1, np.sum(mask_e2e), 1))
 
-        y[0,:,:]=deltaU[mask,:]
+        y[0,:,:]=deltaU[mask_e2e,:]
 
         y = torch.Tensor(y).to(device)
         x_net = model(y)
@@ -250,10 +250,9 @@ def main(inputFolder,outputFolder,difficulty):
         # interpolate the reconstruction into a pixel image
         e2e_reco = np.reshape(x_net.detach().cpu().numpy(),[256,256])
         
-        
-        mat_dict2 = spio.loadmat(mat_files[objectno])
-        Inj = mat_dict2["Inj"]
-        Uel = mat_dict2["Uel"]
+        # mat_dict2 = spio.loadmat(mat_files[objectno])
+        # Inj = mat_dict2["Inj"]
+        # Uel = mat_dict2["Uel"]
         U0 = solver.SolveForward(sigma0, z)
         vm_32 = torch.from_numpy(Uel[vincl]-Uelref[vincl]+U0).to(torch.float32)
         mask = np.array(vincl, bool)
@@ -262,6 +261,7 @@ def main(inputFolder,outputFolder,difficulty):
         reco = reco-sigma0
         reco_pixgrid = KTCAux.interpolateRecoToPixGrid(reco, Mesh)
         
+       
         #threshold the image histogram using Otsu's method
         level, x = KTCScoring.Otsu2(reco_pixgrid.flatten(), 256, 7)
         reco_pixgrid_segmented = np.zeros_like(reco_pixgrid)
@@ -282,11 +282,12 @@ def main(inputFolder,outputFolder,difficulty):
           reco_pixgrid_segmented[ind1] = 1
                      
         reconstruction = reco_pixgrid_segmented
+        
         for i in range(256):
-           for j in range(256):
+            for j in range(256):
              if e2e_reco[i,j]==0:
-                reconstruction[i,j]=0
-
+               reconstruction[i,j]=0
+        
         mdic = {"reconstruction": reconstruction}
         print(outputFolder + '/' + str(objectno + 1) + '.mat')
         sp.io.savemat( outputFolder + '/' + str(objectno + 1) + '.mat',mdic)

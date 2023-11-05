@@ -23,7 +23,7 @@ Please use the following command to install the required packages
 
 ```pip install -r requirements.txt```
 
-Note that CUDA is required to run parts of the code. Also some newer version of the packages might give worse results (in particular torch_geometric should be version 2.3.1). We also make use of the library [deepinv](https://github.com/deepinv/deepinv). To install the latest stable release of deepinv, you can simply do:
+Note that CUDA is required to run parts of the code. Also some newer version of the packages might give worse results (in particular torch-geometric should be version 2.3.1). We also make use of the library [deepinv](https://github.com/deepinv/deepinv). To install the latest stable release of deepinv, you can simply do:
 
 ```pip install deepinv```
 

@@ -43,7 +43,7 @@ You can also install the latest version of deepinv directly from github:
 ``` pip install git+https://github.com/deepinv/deepinv.git#egg=deepinv``` 
 
 For the denoiser, the learned weights are stored in the file
-``` weights_denoiser.pth``
+``` weights_denoiser.pth```
 
 ## References
 

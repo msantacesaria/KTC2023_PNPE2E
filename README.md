@@ -44,6 +44,11 @@ and uploaded directly via the call to the main file once the difficulty level is
 For the denoiser, the learned weights are stored in the file
 ``` weights_denoiser.pth```
 
+## Examples
+
+![Examples_PnP_E2E_merge](https://github.com/msantacesaria/KTC2023_PNPE2E/assets/148894828/76c12696-5ff6-4d3d-84ff-50d7b3b84e51)
+
+
 ## References
 
 * Samuel Hurault, Mathieu Terris, Julian Tachella, DeepInverse: a Pytorch library for imaging with deep learning, https://deepinv.github.io.

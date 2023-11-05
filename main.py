@@ -229,7 +229,7 @@ def main(inputFolder,outputFolder,difficulty):
     denoiser.load_state_dict(torch.load(MODEL_PTH, map_location=torch.device('cuda')), strict=False)
     
     # PnP Parameters
-    its_max_PGN = 10    #Maximum number of OUTER iterations for Proximal Gradient Newton- TV (PGN_TV)
+    its_max_PGN = 5    #Maximum number of OUTER iterations for Proximal Gradient Newton- TV (PGN_TV)
     rel_ch_PGN = 5e-4     #relative change
     alfa = 0.05   #alfa
     step_size = 5e-2

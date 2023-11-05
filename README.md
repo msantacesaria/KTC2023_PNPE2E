@@ -8,6 +8,33 @@ For the end-to-end approach, training was performed using GT simulated data with
 
 For the Plug and Play part, training was performed by associating GT data with their noisy versions which were computed running a regularised Gauss-Newton algorithm (on meshes) for few (5) iterations on the corresponding measurements simulated using the forward model provided.
 
+Training was performed using GT simulated data with random polygons of different shapes, size and postive/negative contrast. In more detail, we created synthetic shapes of:
+- rectangles with sides of different length and with different orientation within the domain
+- squares with side of different length and with different orientation within the domain
+- generic triangles with sides of different lenghts
+- generic quadrilaterals with sides of different lengthts
+- circles of different radii and centres
+- horseshoe shapes of different sides and orientations
+- star-like shapes with 3-4-5 tips with different centres and orientations
+For rectangles, squares, circles and star-like shapes we further allowed the possibility of having holes of different size.
+All shapes were assigned to a random negative/positive value within fixed ranges to simulate resistive/conductive inclusions. We allowed a number of inclusions shaped as above equal to 1, 2, 3, making sure that all shapes do not intersect and are note placed too close to the boundary.
+
+Here are some simulated inclusions (different shapes, size, number, position):
+![Fig2](https://github.com/lucala00/KTC2023_E2E/assets/49308207/7143a902-d650-4c2e-bfe6-da21a19a9550)
+![fig5](https://github.com/lucala00/KTC2023_E2E/assets/49308207/ef9111ad-8e03-46dc-83ca-2f548cebebb3)
+![Figure_3](https://github.com/lucala00/KTC2023_E2E/assets/49308207/1960ec95-f80b-4b35-b3a7-6d8e7ed69e1c)
+![fig1](https://github.com/lucala00/KTC2023_E2E/assets/49308207/c034634f-363c-4c60-99fc-a8aa7ae59a43)
+
+Associated noisy versions were computed running a regularised Gauss-Newton algorithm (on meshes) for few (5) iterations on the corresponding measurements simulated using the forward model provided.
+
+To improve the segmentation performed on the reconstructions obtained, we incorporated a post-processing step where an artificial mask was imposed to set to 0 the resulting reconstruction. The masks were given by an end-to-end approach. Here are some examples of the masks.
+
+![e2e](https://github.com/lucala00/KTC2023_E2E/assets/49308207/089da0f9-0e6d-45ea-9bcc-6aea5ca01884)
+
+We considered a graph-U-net denoiser extending the CNN-based denoiser to non-Euclidian manifold domain. It relies on the Graph U-net architecture, a U-Net-like architecture for graph data which allows high-level feature encoding and decoding for network embedding. It is based on a convolution graph kernel and gPool and gUnpool layers. The pool (gPool) operation samples some nodes to form a smaller graph based on their scalar projection values on a trainable projection vector. As an inverse operation of gPool, the unpooling (gUnpool) operation restores the graph to its original structure with the help of locations of nodes selected in the corresponding gPool layer.
+
+The GU-Net-denoiser as well as the Graph-U-Net can be formalized as a composition of layers, where each layer is characterized by the composition of a graph convolution, which is nothing but a ReLU activation function σ and a gPool/gUnpool operator
+
 ## Authors:
 - Tatiana Bubba, University of Bath, UK, tab73 AT bath.ac.uk
 - Luca Calatroni, CNRS, FR, calatroni AT i3s.unice.fr

@@ -42,6 +42,11 @@ You can also install the latest version of deepinv directly from github:
 
 ``` pip install git+https://github.com/deepinv/deepinv.git#egg=deepinv``` 
 
+For the denoiser, the learned weights are stored in the file
+``` weights_denoiser.pth``
+
 ## References
 
 * Samuel Hurault, Mathieu Terris, Julian Tachella, DeepInverse: a Pytorch library for imaging with deep learning, https://deepinv.github.io.
+*  Francesco Colibazzi, Damiana Lazzaro, Serena Morigi, Andrea Samoré. Deep-plug-and-play proximal Gauss-Newton method with applications to nonlinear, ill-posed inverse problems. Inverse Problems and Imaging, 2023, 17(6): 1226-1248. doi: 10.3934/ipi.2023014
+* Francesco Colibazzi, Damiana Lazzaro, Serena Morigi, Andrea Samoré. Learning Nonlinear Electrical Impedance Tomography. J Sci Comput, 2022, 90(58). https://doi.org/10.1007/s10915-021-01716-4

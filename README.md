@@ -25,7 +25,7 @@ Here are some simulated inclusions (different shapes, size, number, position):
 ![Figure_3](https://github.com/lucala00/KTC2023_E2E/assets/49308207/1960ec95-f80b-4b35-b3a7-6d8e7ed69e1c)
 ![fig1](https://github.com/lucala00/KTC2023_E2E/assets/49308207/c034634f-363c-4c60-99fc-a8aa7ae59a43)
 
-Associated noisy versions were computed running a regularised Gauss-Newton algorithm (on meshes) for few (5) iterations on the corresponding measurements simulated using the forward model provided.
+Associated noisy versions were computed running a proximal Gauss-Newton method (on meshes) with a pre-trained graph neural denoiser in place of the standard proximal map for few (5) iterations on the corresponding measurements simulated using the forward model provided.
 
 To improve the segmentation performed on the reconstructions obtained, we incorporated a post-processing step based on artificial masks given by an end-to-end approach (see [here](https://github.com/lucala00/KTC2023_E2E) fore more details). Here are some examples of the masks for each level of difficulty.
 

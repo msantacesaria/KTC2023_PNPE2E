@@ -27,11 +27,13 @@ Here are some simulated inclusions (different shapes, size, number, position):
 
 Associated noisy versions were computed running a regularised Gauss-Newton algorithm (on meshes) for few (5) iterations on the corresponding measurements simulated using the forward model provided.
 
-To improve the segmentation performed on the reconstructions obtained, we incorporated a post-processing step where an artificial mask was imposed to set to 0 the resulting reconstruction. The masks were given by an end-to-end approach. Here are some examples of the masks.
+To improve the segmentation performed on the reconstructions obtained, we incorporated a post-processing step based on artificial masks given by an end-to-end approach (see [here](https://github.com/lucala00/KTC2023_E2E) fore more details). Here are some examples of the masks for each level of difficulty.
 
 ![e2e](https://github.com/lucala00/KTC2023_E2E/assets/49308207/089da0f9-0e6d-45ea-9bcc-6aea5ca01884)
 
-We considered a graph-U-net denoiser extending the CNN-based denoiser to non-Euclidian manifold domain. It relies on the Graph U-net architecture, a U-Net-like architecture for graph data which allows high-level feature encoding and decoding for network embedding. It is based on a convolution graph kernel and gPool and gUnpool layers. The pool (gPool) operation samples some nodes to form a smaller graph based on their scalar projection values on a trainable projection vector. As an inverse operation of gPool, the unpooling (gUnpool) operation restores the graph to its original structure with the help of locations of nodes selected in the corresponding gPool layer.
+These masks were superimposed on the final segmented reconstruction given by the PnP approach, i.e. the pixels belonging to the background of the masks were set to 0.
+
+For the PnP algorithm, we considered a graph-U-net denoiser extending the CNN-based denoiser to non-Euclidian manifold domain. It relies on the Graph U-net architecture, a U-Net-like architecture for graph data which allows high-level feature encoding and decoding for network embedding. It is based on a convolution graph kernel and gPool and gUnpool layers. The pool (gPool) operation samples some nodes to form a smaller graph based on their scalar projection values on a trainable projection vector. As an inverse operation of gPool, the unpooling (gUnpool) operation restores the graph to its original structure with the help of locations of nodes selected in the corresponding gPool layer.
 
 The GU-Net-denoiser as well as the Graph-U-Net can be formalized as a composition of layers, where each layer is characterized by the composition of a graph convolution, which is nothing but a ReLU activation function σ and a gPool/gUnpool operator
 

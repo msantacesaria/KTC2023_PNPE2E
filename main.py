@@ -262,11 +262,6 @@ def main(inputFolder,outputFolder,difficulty):
         reco = reco-sigma0
         reco_pixgrid = KTCAux.interpolateRecoToPixGrid(reco, Mesh)
         
-        for i in range(256):
-          for j in range(256):
-           if e2e_reco[i,j]==0:
-             reco_pixgrid[i,j]=0
-
         #threshold the image histogram using Otsu's method
         level, x = KTCScoring.Otsu2(reco_pixgrid.flatten(), 256, 7)
         reco_pixgrid_segmented = np.zeros_like(reco_pixgrid)
@@ -287,10 +282,10 @@ def main(inputFolder,outputFolder,difficulty):
           reco_pixgrid_segmented[ind1] = 1
                      
         reconstruction = reco_pixgrid_segmented
-        # for i in range(256):
-        #   for j in range(256):
-        #    if e2e_reco[i,j]==0:
-        #      reconstruction[i,j]=0
+        for i in range(256):
+           for j in range(256):
+             if e2e_reco[i,j]==0:
+                reconstruction[i,j]=0
 
         mdic = {"reconstruction": reconstruction}
         print(outputFolder + '/' + str(objectno + 1) + '.mat')

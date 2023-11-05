@@ -23,7 +23,13 @@ Please use the following command to install the required packages
 
 ```pip install -r requirements.txt```
 
-Note that CUDA is required to run parts of the code. Also some newer version of the packages might give worse results (in particular torch_geometric should be version 2.3.1).
+Note that CUDA is required to run parts of the code. Also some newer version of the packages might give worse results (in particular torch_geometric should be version 2.3.1). We also make use of the library [deepinv](https://github.com/deepinv/deepinv). To install the latest stable release of deepinv, you can simply do:
+
+```pip install deepinv```
+
+You can also install the latest version of deepinv directly from github:
+
+``` pip install git+https://github.com/deepinv/deepinv.git#egg=deepinv``` 
 
 We created a script main.py to reconstruct the inclusions provided for training from voltage measurements:
 
@@ -34,14 +40,6 @@ The same architecture was employed for all levels of difficulties. Training was 
 ```/models/difficulty_{j}_learnedlinear.pth.tar ```
 
 and uploaded directly via the call to the main file once the difficulty level is specified.
-
-To install the latest stable release of deepinv, you can simply do:
-
-```pip install deepinv```
-
-You can also install the latest version of deepinv directly from github:
-
-``` pip install git+https://github.com/deepinv/deepinv.git#egg=deepinv``` 
 
 For the denoiser, the learned weights are stored in the file
 ``` weights_denoiser.pth```

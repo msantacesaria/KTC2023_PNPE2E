@@ -259,6 +259,7 @@ def main(inputFolder,outputFolder,difficulty):
         mask = np.array(vincl, bool)
         InvG=solver.InvGamma_n[np.ix_(mask,mask)].diagonal()
         reco = pnp_net(vm_32,edge_index,LTL,solver,denoiser,z,sigma0,Mesh,its_max_PGN,rel_ch_PGN,alfa,InvG,step_size)
+        reco=reco-sigma0
         reco_pixgrid = KTCAux.interpolateRecoToPixGrid(reco, Mesh)
         
         #threshold the image histogram using Otsu's method

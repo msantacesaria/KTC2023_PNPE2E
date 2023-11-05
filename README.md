@@ -19,10 +19,11 @@ For the Plug and Play part, training was performed by associating GT data with t
 
 ## Installation instructions and requirements
 
-For installation and required environment see the environment_pnp.yml to restore the conda enviroment used for the submission. 
-You can create the enviroment using the following command:
+Please use the following command to install the required packages
 
-```conda env create -f environment.yml```
+```pip install -r requirements.txt```
+
+Note that CUDA is required to run parts of the code. Also some newer version of the packages might give worse results (in particular torch_geometric should be version 2.3.1).
 
 We created a script main.py to reconstruct the inclusions provided for training from voltage measurements:
 

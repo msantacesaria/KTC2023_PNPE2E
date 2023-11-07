@@ -54,8 +54,9 @@ class EITFEM:
             ind = self.Mesh2.H[ii, :]
             gg = self.Mesh2.g[ind, :]
             ss = sigma[ind[[0, 2, 4]]]
+             
             int = self.grinprod_gauss_quad_node(gg, ss)
-            
+            #print("int=",int.shape)
             Inds1 = np.tile(ind, (6, 1))
             Acol[k-1:k+5, :] = Inds1
             ind = ind.T
@@ -188,7 +189,7 @@ class EITFEM:
     def grinprod_gauss_quad_node(self, g, sigma):
         w = np.array([1/6, 1/6, 1/6])
         ip = np.array([[1/2, 0], [1/2, 1/2], [0, 1/2]])
-
+         
         int_sum = 0
         for ii in range(3):
             S = np.array([1 - ip[ii, 0] - ip[ii, 1], ip[ii, 0], ip[ii, 1]])
@@ -198,7 +199,13 @@ class EITFEM:
             iJt = np.linalg.inv(Jt)
             dJt = np.abs(np.linalg.det(Jt))
             G = iJt @ L
-            int_sum += w[ii] * (S.T @ sigma) * G.T @ G * dJt
+            #print("S.T *sigma ",(S.T @ sigma).reshape(1,))
+            #print("sigma shape ",sigma.shape)
+            #print("G.T@G shape ",G.T @ G)
+            scalar=(S.T @ sigma)
+            
+            GTG=G.T@G
+            int_sum += w[ii] * scalar* GTG * dJt
 
         return int_sum
 

@@ -23,7 +23,8 @@ MODEL_PTH = './weights_denoiser.pth'
 #inputFolderMask='Mask_Synthetic/'
 # device = torch.device('cpu')
 # device = dinv.utils.get_freer_gpu()
-device = torch.device('cuda')
+device = torch.device('cpu')
+
 
 class GUNet(torch.nn.Module):
     def __init__(self, data):
@@ -117,10 +118,9 @@ def main(inputFolder,outputFolder,difficulty):
     
     # from E2E
     Uelref = sp.io.loadmat(inputFolder + '/ref.mat')["Uelref"] #measured voltages from water chamber
-    mask_e2e = get_mask(difficulty)
+    mask_diff = get_mask(difficulty)
     backbone = dinv.models.UNet(in_channels=len(regularization), out_channels=3, scales=4).to(device)
     model = Network(backbone, regularization, difficulty=difficulty, device=device, pixels=pixels, train_first=True)
-    
     p = Path(f"models/difficulty_{difficulty}_learnedlinear.pth.tar")
     model.load_state_dict(torch.load(p)['state_dict'])
     # model.load_state_dict(torch.load(p,map_location=torch.device('cpu'))['state_dict'])   # for CPU
@@ -226,12 +226,18 @@ def main(inputFolder,outputFolder,difficulty):
     
     data = Data(x=torch.tensor(sigma0, dtype=torch.float32), edge_index=edge_index)
     denoiser = GUNet(data).to(device)
-    denoiser.load_state_dict(torch.load(MODEL_PTH, map_location=torch.device('cuda')), strict=False)
+    denoiser.load_state_dict(torch.load(MODEL_PTH, map_location=torch.device('cpu')), strict=False)
     
     # PnP Parameters
-    its_max_PGN = 5    #Maximum number of OUTER iterations for Proximal Gradient Newton- TV (PGN_TV)
+    its_max_PGN = 3    #Maximum number of OUTER iterations for Proximal Gradient Newton- TV (PGN_TV)
     rel_ch_PGN = 5e-4     #relative change
-    alfa = 0.05   #alfa
+    alfa = 5e-2   #alfa
+    if difficulty>3:
+        alfa= 1e-2
+
+    if difficulty>5:
+        its_max_PGN=5
+        
     step_size = 5e-2
 
     # Get a list of .mat files in the input folder
@@ -239,9 +245,9 @@ def main(inputFolder,outputFolder,difficulty):
     for objectno in  range (0,len(mat_files)): #compute the reconstruction for each input file
         Uel = sp.io.loadmat(mat_files[objectno])["Uel"]
         deltaU = Uel - Uelref
-        y = np.zeros((1, np.sum(mask_e2e), 1))
+        y = np.zeros((1, np.sum(mask_diff), 1))
 
-        y[0,:,:]=deltaU[mask_e2e,:]
+        y[0,:,:]=deltaU[mask_diff,:]
 
         y = torch.Tensor(y).to(device)
         x_net = model(y)
@@ -250,14 +256,19 @@ def main(inputFolder,outputFolder,difficulty):
         # interpolate the reconstruction into a pixel image
         e2e_reco = np.reshape(x_net.detach().cpu().numpy(),[256,256])
         
-        # mat_dict2 = spio.loadmat(mat_files[objectno])
-        # Inj = mat_dict2["Inj"]
-        # Uel = mat_dict2["Uel"]
+        
+        mat_dict2 = spio.loadmat(mat_files[objectno])
+        Uel = mat_dict2["Uel"]
         U0 = solver.SolveForward(sigma0, z)
         vm_32 = torch.from_numpy(Uel[vincl]-Uelref[vincl]+U0).to(torch.float32)
         mask = np.array(vincl, bool)
         InvG=solver.InvGamma_n[np.ix_(mask,mask)].diagonal()
         reco = pnp_net(vm_32,edge_index,LTL,solver,denoiser,z,sigma0,Mesh,its_max_PGN,rel_ch_PGN,alfa,InvG,step_size)
+        
+        sgplot = KTCPlotting.SigmaPlotter(Meshsim, [2, 3], 'jet')
+        title="Reconstruction"
+        sgplot.basicplot(reco,title)
+        
         reco = reco-sigma0
         reco_pixgrid = KTCAux.interpolateRecoToPixGrid(reco, Mesh)
         
@@ -282,11 +293,25 @@ def main(inputFolder,outputFolder,difficulty):
           reco_pixgrid_segmented[ind1] = 1
                      
         reconstruction = reco_pixgrid_segmented
-        
+        '''
+        fig, ax = plt.subplots()
+        cax = ax.imshow(e2e_reco, cmap='gray')
+        #plt.colorbar(cax)
+        plt.axis('image')
+        plt.title('segmented reconstruction E2E')
+        plt.show()
+        '''
         for i in range(256):
-            for j in range(256):
+           for j in range(256):
              if e2e_reco[i,j]==0:
                reconstruction[i,j]=0
+
+        fig, ax = plt.subplots()
+        cax = ax.imshow(reconstruction, cmap='gray')
+        plt.colorbar(cax)
+        plt.axis('image')
+        plt.title('Object '+str(objectno+1)+' Diff.'+str(difficulty))
+        plt.show()
         
         mdic = {"reconstruction": reconstruction}
         print(outputFolder + '/' + str(objectno + 1) + '.mat')

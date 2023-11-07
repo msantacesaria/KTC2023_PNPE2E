@@ -6,7 +6,7 @@ import torch
 import KTCRegularization
 import KTCFwd
 from torch.nn.functional import interpolate
-from KTCAux_luca import simulateConductivityNew
+#from KTCAux_luca import simulateConductivityNew
 from torchvision.transforms.functional import vflip
 import deepinv as dinv
 

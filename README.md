@@ -48,17 +48,30 @@ The GU-Net-denoiser as well as the Graph-U-Net can be formalized as a compositio
 
 ## Installation instructions and requirements
 
-Please use the following command to install the required packages
+Please install the virtual environment enviroment_pnp for pytorch 2.1 and cuda 12.1 with the command
 
-```pip install -r requirements.txt```
+```conda create -n  environment_pnp```
 
-Note that CUDA is required to run parts of the code. Also some newer version of the packages might give worse results (in particular torch-geometric should be version 2.3.1). We also make use of the library [deepinv](https://github.com/deepinv/deepinv). To install the latest stable release of deepinv, you can simply do:
+then activate it as follows
 
-```pip install deepinv```
+```conda activate environment_pnp```
 
-You can also install the latest version of deepinv directly from github:
+Then the following packages are required
 
-``` pip install git+https://github.com/deepinv/deepinv.git#egg=deepinv``` 
+```conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia```
+
+```pip install torch_geometric==2.3.1```
+
+```pip install torch_scatter torch_sparse torch_cluster  -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html```
+(To be replaced with your version( example: ${TORCH}=2.1.0 and ${CUDA}=cu121))
+
+Then also the following packages are required: matplotlib
+
+```conda install matplotlib```
+
+and deepinv
+
+```pip install git+https://github.com/deepinv/deepinv.git#egg=deepinv```
 
 We created a script main.py to reconstruct the inclusions provided for training from voltage measurements:
 

@@ -75,8 +75,7 @@ For the denoiser, the learned weights are stored in the file
 
 ## Examples
 
-![Examples_PnP_E2E_merge](https://github.com/msantacesaria/KTC2023_PNPE2E/assets/148894828/76c12696-5ff6-4d3d-84ff-50d7b3b84e51)
-
+![Examples_PnP_E2E_merge](https://github.com/msantacesaria/KTC2023_PNPE2E/assets/148894828/b427c896-1cfe-4a82-acac-8e0e2a0e5799)
 
 ## References
 
